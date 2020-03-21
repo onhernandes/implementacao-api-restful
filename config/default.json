@@ -1,0 +1,9 @@
+{
+  "mysql": {
+    "usuario": "root",
+    "senha": "123456",
+    "banco": "api-restful",
+    "uri": "localhost",
+    "port": 3306
+  }
+}
