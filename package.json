@@ -21,7 +21,8 @@
     "nodemon": "^2.0.2"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "criar-tabelas": "node src/db/criarTabelas",
+    "dev": "nodemon src/index"
   },
   "repository": {
     "type": "git",

@@ -6,6 +6,11 @@ module.exports = sequelize => {
       type: Sequelize.STRING,
       allowNull: false
     },
+    quantidade: {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+      defaultValue: 0
+    },
     produto: {
       type: Sequelize.INTEGER,
       allowNull: false,

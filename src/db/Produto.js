@@ -10,6 +10,16 @@ module.exports = sequelize => {
       type: Sequelize.DOUBLE,
       allowNull: false
     },
+    estoque: {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+      defaultValue: 0
+    },
+    categoria: {
+      type: Sequelize.STRING,
+      allowNull: false,
+      defaultValue: 'Não categorizado'
+    },
     fornecedor: {
       type: Sequelize.INTEGER,
       allowNull: false,
