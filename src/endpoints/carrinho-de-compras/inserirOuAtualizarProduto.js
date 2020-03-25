@@ -1,5 +1,5 @@
 module.exports = async contexto => {
-  const ProdutosNoCarrinho = contexto.db.model('produtosNoCarrinho')
+  const ProdutosNoCarrinho = contexto.db.model('produtos_carrinho')
   const instrucoes = {
     cliente: contexto.params.cliente,
     sku: contexto.params.sku

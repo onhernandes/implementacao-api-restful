@@ -16,9 +16,7 @@ app.use(async (contexto, proximo) => {
   contexto.set('X-Response-Time', `${milisegundos}ms`)
 })
 
-app.use(
-  require('./endpoints/fornecedores').routes(),
-  require('./endpoints/carrinho-de-compras').routes()
-)
+app.use(require('./endpoints/fornecedores').routes())
+app.use(require('./endpoints/carrinho-de-compras').routes())
 
 app.listen(3000)

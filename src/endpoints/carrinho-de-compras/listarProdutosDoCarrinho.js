@@ -1,10 +1,9 @@
 module.exports = async contexto => {
-  const ProdutosNoCarrinho = contexto.db.model('produtosNoCarrinho')
+  const ProdutosNoCarrinho = contexto.db.model('produtos_carrinho')
   const produtos = await ProdutosNoCarrinho
     .findAll({
       where: {
-        cliente: contexto.params.cliente,
-        sku: contexto.params.sku
+        cliente: contexto.params.cliente
       }
     })
 

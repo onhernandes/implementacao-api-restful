@@ -16,5 +16,6 @@ const instance = new Sequelize(
 
 require('./Fornecedor')(instance)
 require('./Produto')(instance)
+require('./ProdutosNoCarrinho')(instance)
 
 module.exports = instance

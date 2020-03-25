@@ -7,6 +7,6 @@ const removerProdutoDoCarrinho = require('./removerProdutoDoCarrinho')
 roteador.delete('/:cliente/carrinho-de-compras/:sku', removerProdutoDoCarrinho)
 
 const listarProdutosDoCarrinho = require('./listarProdutosDoCarrinho')
-roteador.delete('/:cliente/carrinho-de-compras', listarProdutosDoCarrinho)
+roteador.get('/:cliente/carrinho-de-compras', listarProdutosDoCarrinho)
 
 module.exports = roteador

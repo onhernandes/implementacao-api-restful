@@ -1,5 +1,5 @@
 module.exports = async contexto => {
-  const ProdutosNoCarrinho = contexto.db.model('produtosNoCarrinho')
+  const ProdutosNoCarrinho = contexto.db.model('produtos_carrinho')
   const instrucoes = {
     cliente: contexto.params.cliente,
     sku: contexto.params.sku
@@ -13,9 +13,7 @@ module.exports = async contexto => {
     return
   }
 
-  contexto.status = 200
-  contexto.body = produtoExiste
-  contexto.set('etag', contexto.body.version)
-  const ultimaModificacao = (new Date(contexto.body.updatedAt)).getTime()
-  contexto.set('Last-Modified', ultimaModificacao)
+  await ProdutosNoCarrinho
+    .destroy({ where: instrucoes })
+  contexto.status = 204
 }
