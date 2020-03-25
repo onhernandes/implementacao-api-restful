@@ -1,7 +1,7 @@
 module.exports = async contexto => {
   const Produto = contexto.db.model('produto')
   const instrucoes = {
-    fornecedor: contexto.query.fornecedor
+    fornecedor: contexto.params.fornecedor
   }
 
   if (contexto.query.categoria) {

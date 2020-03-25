@@ -17,7 +17,8 @@ app.use(async (contexto, proximo) => {
 })
 
 app.use(
-  require('./endpoints/fornecedores').routes()
+  require('./endpoints/fornecedores').routes(),
+  require('./endpoints/carrinho-de-compras').routes()
 )
 
 app.listen(3000)

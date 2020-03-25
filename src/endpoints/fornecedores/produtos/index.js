@@ -20,7 +20,4 @@ roteador.delete('/:id', apagarProduto)
 const diminuirEstoque = require('./diminuirEstoque')
 roteador.post('/:id/diminuir-estoque', diminuirEstoque)
 
-const roteadorPedidos = require('./pedidos-de-vendas')
-roteador.use('/:produto/pedidos', roteadorPedidos.routes())
-
 module.exports = roteador

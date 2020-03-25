@@ -1,8 +1,8 @@
 module.exports = async contexto => {
   const Produto = contexto.db.model('produto')
   const instrucoes = {
-    id: contexto.query.id,
-    fornecedor: contexto.query.fornecedor
+    id: contexto.params.id,
+    fornecedor: contexto.params.fornecedor
   }
 
   const produtoEncontrado = await Produto
@@ -10,7 +10,19 @@ module.exports = async contexto => {
 
   if (!produtoEncontrado) {
     contexto.status = 404
-    contexto.body = 'Produto não encontrado!'
+    contexto.body = {
+      id: 0,
+      description: 'Produto não encontrado!'
+    }
+    return
+  }
+
+  if (produtoEncontrado.estoque === 0) {
+    contexto.status = 409
+    contexto.body = {
+      id: 1,
+      description: 'Estoque do produto já está zerado!'
+    }
     return
   }
 

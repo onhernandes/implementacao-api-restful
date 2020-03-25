@@ -2,14 +2,17 @@ module.exports = async contexto => {
   const Produto = contexto.db.model('produto')
   const produto = await Produto.findOne({
     where: {
-      fornecedor: contexto.query.fornecedor,
-      id: contexto.query.id
+      fornecedor: contexto.params.fornecedor,
+      id: contexto.params.id
     }
   })
 
   if (!produto) {
     contexto.status = 404
-    contexto.body = 'Produto não encontrado!'
+    contexto.body = {
+      id: 0,
+      description: 'Produto não encontrado!'
+    }
     return
   }
 
