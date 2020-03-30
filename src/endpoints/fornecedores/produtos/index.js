@@ -1,7 +1,14 @@
-const roteador = require('koa-router')()
+const roteador = require('express').Router()
 
 const listarProdutos = require('./listarProdutos')
-roteador.get('/', listarProdutos)
+roteador.get('/', (requisicao, resposta) => {
+  listarProdutos(requisicao.params.fornecedor, requisicao.query.categoria)
+    .then(lista => {
+      resposta.status(200)
+      resposta.end(JSON.stringify(lista))
+    })
+})
+/*
 roteador.head('/', listarProdutos)
 
 const criarProduto = require('./criarProduto')
@@ -19,5 +26,6 @@ roteador.delete('/:id', apagarProduto)
 
 const diminuirEstoque = require('./diminuirEstoque')
 roteador.post('/:id/diminuir-estoque', diminuirEstoque)
+*/
 
 module.exports = roteador

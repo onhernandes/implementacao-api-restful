@@ -1,23 +1,16 @@
-module.exports = async contexto => {
-  const Fornecedor = contexto.db.model('fornecedor')
+const Fornecedor = require('./Fornecedor')
+module.exports = async (id, dadosParaAtualizar) => {
   const fornecedor = await Fornecedor.findOne({
-    where: {
-      id: contexto.params.id
-    },
+    where: { id },
     attributes: ['id']
   })
 
   if (!fornecedor) {
-    contexto.status = 404
-    contexto.body = {
-      id: 0,
-      description: 'Fornecedor não encontrado!'
-    }
-    return
+    return false
   }
 
   await Fornecedor.update(
-    contexto.request.body,
+    dadosParaAtualizar,
     {
       where: {
         id: fornecedor.id
@@ -25,5 +18,5 @@ module.exports = async contexto => {
     }
   )
 
-  contexto.status = 204
+  return true
 }

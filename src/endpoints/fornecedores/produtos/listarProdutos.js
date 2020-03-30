@@ -1,12 +1,11 @@
-module.exports = async contexto => {
-  const Produto = contexto.db.model('produto')
-  const instrucoes = {
-    fornecedor: contexto.params.fornecedor
+const Produto = require('./Produto')
+
+module.exports = (fornecedor, categoria) => {
+  const instrucoes = { fornecedor }
+
+  if (categoria) {
+    instrucoes.categoria = categoria
   }
 
-  if (contexto.query.categoria) {
-    instrucoes.categoria = contexto.query.categoria
-  }
-
-  contexto.body = await Produto.findAll({ where: instrucoes })
+  return Produto.findAll({ where: instrucoes })
 }
