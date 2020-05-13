@@ -1,8 +1,10 @@
-module.exports = async contexto => {
-  const Produto = contexto.db.model('produto')
+const Produto = require('./Produto')
+const ErroAPI = require('../../../ErroAPI')
+
+module.exports = async (idFornecedor, idProduto, dados) => {
   const instrucoes = {
-    id: contexto.params.id,
-    fornecedor: contexto.params.fornecedor
+    id: idProduto,
+    fornecedor: idFornecedor
   }
 
   const produto = await Produto.findOne({
@@ -10,30 +12,22 @@ module.exports = async contexto => {
   })
 
   if (!produto) {
-    contexto.status = 404
-    contexto.body = {
-      id: 0,
-      description: 'Produto não encontrado!'
-    }
-    return
+    throw new ErroAPI(404, 'Produto não encontrado!', 0)
   }
 
-  const dados = {}
+  const paraAtualizar = {}
 
-  if (contexto.request.body.titulo) {
-    dados.titulo = contexto.request.body.titulo
+  if (dados.titulo) {
+    paraAtualizar.titulo = dados.titulo
   }
 
-  if (contexto.request.body.preco) {
-    dados.preco = contexto.request.body.preco
+  if (dados.preco) {
+    paraAtualizar.preco = dados.preco
   }
 
-  if (!dados) {
-    contexto.status = 400
-    contexto.body = 'Sem dados para atualizar!'
-    return
+  if (!paraAtualizar) {
+    throw new ErroAPI(400, 'Não há dados para atualizar!', 1)
   }
 
-  await Produto.update(dados, { where: instrucoes })
-  contexto.status = 204
+  return Produto.update(dados, { where: instrucoes })
 }

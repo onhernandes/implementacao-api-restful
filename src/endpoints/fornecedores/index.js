@@ -1,5 +1,42 @@
 const roteador = require('express').Router()
 
+const pegarFornecedor = require('./pegarFornecedor')
+const verificarFornecedor = (requisicao, resposta, proximo) => {
+  pegarFornecedor(requisicao.params.fornecedor)
+    .then(fornecedor => {
+      proximo()
+    })
+    .catch(proximo)
+}
+
+roteador.get('/:fornecedor', (requisicao, resposta, proximo) => {
+  resposta.setHeader('Content-Type', 'application/json')
+
+  pegarFornecedor(requisicao.params.fornecedor)
+    .then(fornecedor => {
+      resposta.status(200)
+      const ultimaVezModificado = (new Date(fornecedor.updatedAt)).getTime()
+      resposta.setHeader('Last-Modified', ultimaVezModificado)
+      resposta.setHeader('ETag', fornecedor.version)
+      resposta.end(JSON.stringify(fornecedor))
+    })
+    .catch(proximo)
+})
+
+roteador.head('/:fornecedor', (requisicao, resposta, proximo) => {
+  resposta.setHeader('Content-Type', 'application/json')
+
+  pegarFornecedor(requisicao.params.fornecedor)
+    .then(fornecedor => {
+      resposta.status(200)
+      const ultimaVezModificado = (new Date(fornecedor.updatedAt)).getTime()
+      resposta.setHeader('Last-Modified', ultimaVezModificado)
+      resposta.setHeader('ETag', fornecedor.version)
+      resposta.end()
+    })
+    .catch(proximo)
+})
+
 const criarFornecedor = require('./criarFornecedor')
 roteador.post('/', (requisicao, resposta) => {
   criarFornecedor(requisicao.body)
@@ -16,6 +53,7 @@ roteador.get('/', (requisicao, resposta) => {
   listarFornecedores()
     .then(lista => {
       resposta.status(200)
+      resposta.setHeader('Content-Type', 'application/json')
       resposta.end(JSON.stringify(lista))
     })
 })
@@ -24,91 +62,37 @@ roteador.head('/', (requisicao, resposta) => {
   listarFornecedores()
     .then(lista => {
       resposta.status(200)
+      resposta.setHeader('Content-Type', 'application/json')
       resposta.end()
-    })
-})
-
-const pegarFornecedor = require('./pegarFornecedor')
-roteador.get('/:id', (requisicao, resposta) => {
-  pegarFornecedor(requisicao.params.id)
-    .then(fornecedor => {
-      if (!fornecedor) {
-        resposta.status(404)
-        resposta.end(JSON.stringify({
-          id: 0,
-          description: 'Fornecedor não encontrado!'
-        }))
-        return
-      }
-
-      resposta.status(200)
-
-      const ultimaVezModificado = (new Date(fornecedor.updatedAt)).getTime()
-      resposta.setHeader('Last-Modified', ultimaVezModificado)
-      resposta.setHeader('ETag', fornecedor.version)
-      resposta.end(JSON.stringify(fornecedor))
-    })
-})
-roteador.head('/:id', (requisicao, resposta) => {
-  pegarFornecedor(requisicao.params.id)
-    .then(fornecedor => {
-      if (!fornecedor) {
-        resposta.status(404)
-        resposta.end(JSON.stringify({
-          id: 0,
-          description: 'Fornecedor não encontrado!'
-        }))
-        return
-      }
-
-      resposta.status(200)
-
-      const ultimaVezModificado = (new Date(fornecedor.updatedAt)).getTime()
-      resposta.setHeader('Last-Modified', ultimaVezModificado)
-      resposta.setHeader('ETag', fornecedor.version)
-      resposta.end(JSON.stringify(fornecedor))
     })
 })
 
 const atualizarFornecedor = require('./atualizarFornecedor')
-roteador.put('/:id', (requisicao, resposta) => {
-  atualizarFornecedor(requisicao.params.id, requisicao.body)
-    .then(fornecedor => {
-      if (!fornecedor) {
-        resposta.status(404)
-        resposta.end(JSON.stringify({
-          id: 0,
-          description: 'Fornecedor não encontrado!'
-        }))
-        return
-      }
+roteador.put('/:fornecedor', verificarFornecedor, (requisicao, resposta, proximo) => {
+  resposta.setHeader('Content-Type', 'application/json')
 
+  atualizarFornecedor(requisicao.params.fornecedor, requisicao.body)
+    .then(fornecedor => {
+      resposta.setHeader('Content-Type', 'application/json')
       resposta.status(204)
       resposta.end()
     })
+    .catch(proximo)
 })
 
 const apagarFornecedor = require('./apagarFornecedor')
-roteador.delete('/:id', (requisicao, resposta) => {
-  apagarFornecedor(requisicao.params.id)
-    .then(fornecedor => {
-      if (!fornecedor) {
-        resposta.status(404)
-        resposta.end(JSON.stringify({
-          id: 0,
-          description: 'Fornecedor não encontrado!'
-        }))
-        return
-      }
+roteador.delete('/:fornecedor', verificarFornecedor, (requisicao, resposta, proximo) => {
+  resposta.setHeader('Content-Type', 'application/json')
 
+  apagarFornecedor(requisicao.params.fornecedor)
+    .then(fornecedor => {
       resposta.status(204)
       resposta.end()
     })
+    .catch(proximo)
 })
 
-/*
 const roteadorProdutos = require('./produtos')
-roteador.use('/:fornecedor/produtos', roteadorProdutos.routes())
-*/
+roteador.use('/:fornecedor/produtos', verificarFornecedor, roteadorProdutos)
 
 module.exports = roteador

@@ -1,23 +1,17 @@
-module.exports = async contexto => {
-  const Produto = contexto.db.model('produto')
+const Produto = require('./Produto')
+const ErroAPI = require('../../../ErroAPI')
+
+module.exports = async (idFornecedor, idProduto) => {
   const produto = await Produto.findOne({
     where: {
-      fornecedor: contexto.params.fornecedor,
-      id: contexto.params.id
+      fornecedor: idFornecedor,
+      id: idProduto
     }
   })
 
   if (!produto) {
-    contexto.status = 404
-    contexto.body = {
-      id: 0,
-      description: 'Produto não encontrado!'
-    }
-    return
+    throw new ErroAPI(404, 'Produto não encontrado!', 0)
   }
 
-  const ultimaVezModificado = (new Date(produto.updatedAt)).getTime()
-  contexto.set('Last-Modified', ultimaVezModificado)
-  contexto.set('ETag', produto.version)
-  contexto.body = produto
+  return produto
 }

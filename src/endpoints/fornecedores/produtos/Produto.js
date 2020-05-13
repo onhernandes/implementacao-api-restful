@@ -30,4 +30,9 @@ const colunas = {
   }
 }
 
-module.exports = instancia.define('produto', colunas, {})
+const opcoes = {
+  freezeTableName: true,
+  tableName: 'produtos'
+}
+
+module.exports = instancia.define('produto', colunas, opcoes)

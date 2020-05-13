@@ -1,7 +1,9 @@
-const sequelize = require('./index')
+const models = [
+  require('../endpoints/fornecedores/Fornecedor').sync(),
+  require('../endpoints/fornecedores/produtos/Produto').sync()
+]
 
-sequelize
-  .sync()
+Promise.all(models)
   .then(() => console.log('Sincronizado!'))
-  .then(() => sequelize.close())
+  .then(() => process.exit())
   .catch(console.log)

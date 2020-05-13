@@ -1,4 +1,5 @@
 const Fornecedor = require('./Fornecedor')
+const ErroAPI = require('../../ErroAPI')
 module.exports = async id => {
   const fornecedor = await Fornecedor.findOne({
     where: { id },
@@ -6,7 +7,7 @@ module.exports = async id => {
   })
 
   if (!fornecedor) {
-    return false
+    throw new ErroAPI(404, 'Fornecedor não encontrado!', 0)
   }
 
   await Fornecedor.destroy({
