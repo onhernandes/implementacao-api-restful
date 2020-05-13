@@ -10,7 +10,7 @@ app.use((requisicao, resposta, proximo) => {
 })
 
 app.use('/api/fornecedores', require('./endpoints/fornecedores'))
-// app.use('/clientes', require('./endpoints/carrinho-de-compras'))
+app.use('/api/clientes', require('./endpoints/carrinho-de-compras'))
 
 app.use(function (erro, requisicao, resposta, proximo) {
   resposta.status(erro.status)

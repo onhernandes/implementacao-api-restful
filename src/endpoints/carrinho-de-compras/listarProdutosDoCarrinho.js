@@ -1,12 +1,6 @@
-module.exports = async contexto => {
-  const ProdutosNoCarrinho = contexto.db.model('produtos_carrinho')
-  const produtos = await ProdutosNoCarrinho
-    .findAll({
-      where: {
-        cliente: contexto.params.cliente
-      }
-    })
+const ProdutosNoCarrinho = require('./ProdutosNoCarrinho')
 
-  contexto.status = 200
-  contexto.body = produtos
-}
+module.exports = async cliente => ProdutosNoCarrinho
+  .findAll({
+    where: { cliente }
+  })

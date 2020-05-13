@@ -1,19 +1,19 @@
-module.exports = async contexto => {
-  const ProdutosNoCarrinho = contexto.db.model('produtos_carrinho')
+const ProdutosNoCarrinho = require('./ProdutosNoCarrinho')
+const ErroAPI = require('../../ErroAPI')
+
+module.exports = async (cliente, sku) => {
   const instrucoes = {
-    cliente: contexto.params.cliente,
-    sku: contexto.params.sku
+    cliente,
+    sku
   }
+
   const produtoExiste = await ProdutosNoCarrinho
     .findOne({ where: instrucoes })
 
   if (!produtoExiste) {
-    contexto.status = 404
-    contexto.body = 'Produto não existe no carrinho!'
-    return
+    throw new ErroAPI(404, 'Produto não existe no carrinho!', 0)
   }
 
   await ProdutosNoCarrinho
     .destroy({ where: instrucoes })
-  contexto.status = 204
 }
