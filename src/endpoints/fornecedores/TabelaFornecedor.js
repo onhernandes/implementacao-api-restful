@@ -39,7 +39,7 @@ module.exports = {
     })
 
     if (!fornecedor) {
-      throw new NaoEncontrado()
+      throw new NaoEncontrado('fornecedor')
     }
 
     return fornecedor

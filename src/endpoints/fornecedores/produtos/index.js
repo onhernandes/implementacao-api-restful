@@ -1,104 +1,111 @@
 const roteador = require('express').Router({ mergeParams: true })
+const TabelaProduto = require('./TabelaProduto.js')
+const Produto = require('./Produto')
 
-const listarProdutos = require('./listarProdutos')
-roteador.get('/', (requisicao, resposta, proximo) => {
-  resposta.setHeader('Content-Type', 'application/json')
-
-  listarProdutos(requisicao.params.fornecedor, requisicao.query.categoria)
-    .then(lista => {
-      resposta.status(200)
-      resposta.end(JSON.stringify(lista))
-    })
-    .catch(proximo)
+roteador.get('/', async (requisicao, resposta, proximo) => {
+  try {
+    const lista = await TabelaProduto.listar()
+    resposta.status(200)
+    resposta.end(JSON.stringify(lista))
+  } catch (e) {
+    proximo(e)
+  }
 })
 
 roteador.head('/', (requisicao, resposta, proximo) => {
-  resposta.setHeader('Content-Type', 'application/json')
-
-  listarProdutos(requisicao.params.fornecedor, requisicao.query.categoria)
-    .then(lista => {
-      resposta.status(200)
-      resposta.end()
-    })
-    .catch(proximo)
+  resposta.status(200)
+  resposta.end()
 })
 
-const criarProduto = require('./criarProduto')
-roteador.post('/', (requisicao, resposta, proximo) => {
-  resposta.setHeader('Content-Type', 'application/json')
-
-  criarProduto(requisicao.params.fornecedor, requisicao.body)
-    .then(produto => {
-      resposta.setHeader('Location', `/api/fornecedores/${produto.fornecedor}/produtos/${produto.id}`)
-      resposta.status(200)
-      resposta.end(JSON.stringify(produto))
-    })
-    .catch(proximo)
+roteador.post('/', async (requisicao, resposta, proximo) => {
+  try {
+    const fornecedor = requisicao.params.fornecedor
+    const dados = Object.assign({}, requisicao.body, { fornecedor })
+    const produto = new Produto(dados)
+    produto.criar()
+    resposta.setHeader('Location', `/api/fornecedores/${produto.fornecedor}/produtos/${produto.id}`)
+    resposta.status(200)
+    resposta.end(JSON.stringify(produto))
+  } catch (e) {
+    proximo(e)
+  }
 })
 
-const pegarProduto = require('./pegarProduto')
-roteador.get('/:id', (requisicao, resposta, proximo) => {
-  resposta.setHeader('Content-Type', 'application/json')
+roteador.get('/:id', async (requisicao, resposta, proximo) => {
+  try {
+    const id = requisicao.params.id
+    const fornecedor = requisicao.params.fornecedor
+    const produto = new Produto({ id, fornecedor })
+    await produto.carregar()
 
-  pegarProduto(requisicao.params.fornecedor, requisicao.params.id)
-    .then(produto => {
-      const ultimaVezModificado = (new Date(produto.updatedAt)).getTime()
-      resposta.setHeader('Last-Modified', ultimaVezModificado)
-      resposta.setHeader('ETag', produto.version)
-      resposta.status(200)
-      resposta.end(JSON.stringify(produto))
-    })
-    .catch(proximo)
+    const ultimaVezModificado = (new Date(produto.updatedAt)).getTime()
+    resposta.setHeader('Last-Modified', ultimaVezModificado)
+    resposta.setHeader('ETag', produto.version)
+    resposta.status(200)
+    resposta.end(JSON.stringify(produto))
+  } catch (e) {
+    proximo(e)
+  }
 })
 
-roteador.head('/:id', (requisicao, resposta, proximo) => {
-  resposta.setHeader('Content-Type', 'application/json')
+roteador.head('/:id', async (requisicao, resposta, proximo) => {
+  try {
+    const id = requisicao.params.id
+    const fornecedor = requisicao.params.fornecedor
+    const produto = new Produto({ id, fornecedor })
+    await produto.carregar()
 
-  pegarProduto(requisicao.params.fornecedor, requisicao.params.id)
-    .then(produto => {
-      const ultimaVezModificado = (new Date(produto.updatedAt)).getTime()
-      resposta.setHeader('Last-Modified', ultimaVezModificado)
-      resposta.setHeader('ETag', produto.version)
-      resposta.status(200)
-      resposta.end()
-    })
-    .catch(proximo)
+    const ultimaVezModificado = (new Date(produto.updatedAt)).getTime()
+    resposta.setHeader('Last-Modified', ultimaVezModificado)
+    resposta.setHeader('ETag', produto.version)
+    resposta.status(200)
+    resposta.end()
+  } catch (e) {
+    proximo(e)
+  }
 })
 
-const atualizarProduto = require('./atualizarProduto')
-roteador.put('/:id', (requisicao, resposta, proximo) => {
-  resposta.setHeader('Content-Type', 'application/json')
-
-  atualizarProduto(requisicao.params.fornecedor, requisicao.params.id, requisicao.body)
-    .then(produto => {
-      resposta.status(204)
-      resposta.end()
-    })
-    .catch(proximo)
+roteador.put('/:id', async (requisicao, resposta, proximo) => {
+  try {
+    const id = requisicao.params.id
+    const fornecedor = requisicao.params.fornecedor
+    const dados = Object.assign({}, requisicao.body, { id, fornecedor })
+    const produto = new Produto(dados)
+    await produto.atualizar()
+    resposta.status(204)
+    const ultimaVezModificado = (new Date(produto.updatedAt)).getTime()
+    resposta.setHeader('Last-Modified', ultimaVezModificado)
+    resposta.setHeader('ETag', produto.version)
+    resposta.end()
+  } catch (e) {
+    proximo(e)
+  }
 })
 
-const apagarProduto = require('./apagarProduto')
-roteador.delete('/:id', (requisicao, resposta, proximo) => {
-  resposta.setHeader('Content-Type', 'application/json')
-
-  apagarProduto(requisicao.params.fornecedor, requisicao.params.id)
-    .then(produto => {
-      resposta.status(204)
-      resposta.end()
-    })
-    .catch(proximo)
+roteador.delete('/:id', async (requisicao, resposta, proximo) => {
+  try {
+    const id = requisicao.params.id
+    const fornecedor = requisicao.params.fornecedor
+    const produto = new Produto({ id, fornecedor })
+    await produto.remover()
+    resposta.status(204)
+    resposta.end()
+  } catch (e) {
+    proximo(e)
+  }
 })
 
-const diminuirEstoque = require('./diminuirEstoque')
-roteador.post('/:id/diminuir-estoque', (requisicao, resposta, proximo) => {
-  resposta.setHeader('Content-Type', 'application/json')
-
-  diminuirEstoque(requisicao.params.fornecedor, requisicao.params.id)
-    .then(produto => {
-      resposta.status(204)
-      resposta.end()
-    })
-    .catch(proximo)
+roteador.post('/:id/diminuir-estoque', async (requisicao, resposta, proximo) => {
+  try {
+    const id = requisicao.params.id
+    const fornecedor = requisicao.params.fornecedor
+    const produto = new Produto({ id, fornecedor })
+    await produto.diminuirEstoque()
+    resposta.status(204)
+    resposta.end()
+  } catch (e) {
+    proximo(e)
+  }
 })
 
 module.exports = roteador

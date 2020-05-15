@@ -1,97 +1,110 @@
 const roteador = require('express').Router()
 const Fornecedor = require('./Fornecedor')
-
-const pegarFornecedor = require('./pegarFornecedor')
-const verificarFornecedor = (requisicao, resposta, proximo) => {
-  pegarFornecedor(requisicao.params.fornecedor)
-    .then(fornecedor => {
-      proximo()
-    })
-    .catch(proximo)
-}
+const TabelaFornecedor = require('./TabelaFornecedor')
 
 roteador.get('/:fornecedor', async (requisicao, resposta, proximo) => {
   resposta.setHeader('Content-Type', 'application/json')
 
-  pegarFornecedor(requisicao.params.fornecedor)
-    .then(fornecedor => {
-      resposta.status(200)
-      const ultimaVezModificado = (new Date(fornecedor.updatedAt)).getTime()
-      resposta.setHeader('Last-Modified', ultimaVezModificado)
-      resposta.setHeader('ETag', fornecedor.version)
-      resposta.end(JSON.stringify(fornecedor))
-    })
-    .catch(proximo)
+  try {
+    const fornecedor = new Fornecedor({ id: requisicao.params.fornecedor })
+    await fornecedor.carregar()
+
+    resposta.status(200)
+    const ultimaVezModificado = (new Date(fornecedor.updatedAt)).getTime()
+    resposta.setHeader('Last-Modified', ultimaVezModificado)
+    resposta.setHeader('ETag', fornecedor.version)
+    resposta.end(JSON.stringify(fornecedor))
+  } catch (e) {
+    proximo(e)
+  }
 })
 
-roteador.head('/:fornecedor', (requisicao, resposta, proximo) => {
+roteador.head('/:fornecedor', async (requisicao, resposta, proximo) => {
   resposta.setHeader('Content-Type', 'application/json')
 
-  pegarFornecedor(requisicao.params.fornecedor)
-    .then(fornecedor => {
-      resposta.status(200)
-      const ultimaVezModificado = (new Date(fornecedor.updatedAt)).getTime()
-      resposta.setHeader('Last-Modified', ultimaVezModificado)
-      resposta.setHeader('ETag', fornecedor.version)
-      resposta.end()
-    })
-    .catch(proximo)
+  try {
+    const fornecedor = new Fornecedor({ id: requisicao.params.fornecedor })
+    await fornecedor.carregar()
+    resposta.status(200)
+    const ultimaVezModificado = (new Date(fornecedor.updatedAt)).getTime()
+    resposta.setHeader('Last-Modified', ultimaVezModificado)
+    resposta.setHeader('ETag', fornecedor.version)
+    resposta.end()
+  } catch (e) {
+    proximo(e)
+  }
 })
 
-const criarFornecedor = require('./criarFornecedor')
-roteador.post('/', (requisicao, resposta) => {
-  criarFornecedor(requisicao.body)
-    .then(fornecedor => {
-      resposta.status(201)
-      resposta.setHeader('Location', `/api/fornecedores/${fornecedor.id}`)
-      resposta.setHeader('Content-Type', 'application/json')
-      resposta.end(JSON.stringify(fornecedor))
-    })
+roteador.post('/', async (requisicao, resposta, proximo) => {
+  try {
+    const fornecedor = new Fornecedor(requisicao.body)
+    await fornecedor.criar()
+
+    resposta.status(201)
+    resposta.setHeader('Location', `/api/fornecedores/${fornecedor.id}`)
+    resposta.setHeader('Content-Type', 'application/json')
+    resposta.setHeader('ETag', fornecedor.version)
+    resposta.end(JSON.stringify(fornecedor))
+  } catch (e) {
+    proximo(e)
+  }
 })
 
-const listarFornecedores = require('./listarFornecedores')
-roteador.get('/', (requisicao, resposta) => {
-  listarFornecedores()
-    .then(lista => {
-      resposta.status(200)
-      resposta.setHeader('Content-Type', 'application/json')
-      resposta.end(JSON.stringify(lista))
-    })
+roteador.get('/', async (requisicao, resposta, proximo) => {
+  try {
+    const lista = await TabelaFornecedor.listar(requisicao.query.categoria)
+    resposta.status(200)
+    resposta.setHeader('Content-Type', 'application/json')
+    resposta.end(JSON.stringify(lista))
+  } catch (e) {
+    proximo(e)
+  }
 })
 
-roteador.head('/', (requisicao, resposta) => {
-  listarFornecedores()
-    .then(lista => {
-      resposta.status(200)
-      resposta.setHeader('Content-Type', 'application/json')
-      resposta.end()
-    })
+roteador.head('/', async (requisicao, resposta, proximo) => {
+  try {
+    resposta.status(200)
+    resposta.setHeader('Content-Type', 'application/json')
+    resposta.end()
+  } catch (e) {
+    proximo(e)
+  }
 })
 
-const atualizarFornecedor = require('./atualizarFornecedor')
-roteador.put('/:fornecedor', verificarFornecedor, (requisicao, resposta, proximo) => {
+roteador.put('/:fornecedor', async (requisicao, resposta, proximo) => {
+  try {
+    const id = requisicao.params.fornecedor
+    const dados = Object.assign({}, requisicao.body, { id })
+    const fornecedor = new Fornecedor(dados)
+    await fornecedor.atualizar()
+    await fornecedor.carregar()
+
+    resposta.setHeader('Content-Type', 'application/json')
+    const ultimaVezModificado = (new Date(fornecedor.updatedAt)).getTime()
+    resposta.setHeader('Last-Modified', ultimaVezModificado)
+    resposta.setHeader('ETag', fornecedor.version)
+    resposta.status(204)
+    resposta.end()
+  } catch (e) {
+    proximo(e)
+  }
+})
+
+roteador.delete('/:fornecedor', async (requisicao, resposta, proximo) => {
   resposta.setHeader('Content-Type', 'application/json')
 
-  atualizarFornecedor(requisicao.params.fornecedor, requisicao.body)
-    .then(fornecedor => {
-      resposta.setHeader('Content-Type', 'application/json')
-      resposta.status(204)
-      resposta.end()
-    })
-    .catch(proximo)
+  try {
+    const id = requisicao.params.fornecedor
+    const fornecedor = new Fornecedor({ id })
+    await fornecedor.remover()
+    resposta.status(204)
+    resposta.end()
+  } catch (e) {
+    proximo(e)
+  }
 })
 
-const apagarFornecedor = require('./apagarFornecedor')
-roteador.delete('/:fornecedor', verificarFornecedor, (requisicao, resposta, proximo) => {
-  resposta.setHeader('Content-Type', 'application/json')
-
-  apagarFornecedor(requisicao.params.fornecedor)
-    .then(fornecedor => {
-      resposta.status(204)
-      resposta.end()
-    })
-    .catch(proximo)
-})
+const verificarFornecedor = require('./verificarSeExisteMiddleware')
 
 const roteadorProdutos = require('./produtos')
 roteador.use('/:fornecedor/produtos', verificarFornecedor, roteadorProdutos)

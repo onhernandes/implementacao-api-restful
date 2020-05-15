@@ -2,13 +2,26 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const app = express()
 const { tiposAceitos } = require('./serializador.js')
+const NaoEncontrado = require('./erros/NaoEncontrado')
+const CampoInvalido = require('./erros/CampoInvalido')
 
 app.use(bodyParser.json())
 
 app.use((requisicao, resposta, proximo) => {
-  const formatoRequisitado = requisicao.header('Accept')
+  try {
+    const formatoRequisitado = requisicao.header('Accept')
 
-  if (tiposAceitos.indexOf(formatoRequisitado) === -1) {
+    if (tiposAceitos.indexOf(formatoRequisitado) === -1) {
+      resposta.status(406)
+      resposta.end()
+      return
+    }
+
+    const formatoResposta = formatoRequisitado === '*/*' ? 'application/json' : formatoRequisitado
+    resposta.setHeader('Content-Type', formatoResposta)
+    proximo()
+  } catch (e) {
+    console.error(e)
   }
 })
 
@@ -18,15 +31,26 @@ app.use((requisicao, resposta, proximo) => {
 })
 
 app.use('/api/fornecedores', require('./endpoints/fornecedores'))
-app.use('/api/clientes', require('./endpoints/carrinho-de-compras'))
+// app.use('/api/clientes', require('./endpoints/carrinho-de-compras'))
 
-app.use(function (erro, requisicao, resposta, proximo) {
-  resposta.status(erro.status)
+app.use((erro, requisicao, resposta, proximo) => {
+  console.error(erro)
+  let status = 500
 
   const informacoes = {
     idErro: erro.idErro,
-    mensagem: erro.mensagem
+    mensagem: erro.message
   }
+
+  if (erro instanceof NaoEncontrado) {
+    status = 404
+  }
+
+  if (erro instanceof CampoInvalido) {
+    status = 400
+  }
+
+  resposta.status(status)
 
   const json = JSON.stringify(informacoes)
   resposta.send(json)
