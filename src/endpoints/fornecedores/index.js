@@ -1,4 +1,5 @@
 const roteador = require('express').Router()
+const Fornecedor = require('./Fornecedor')
 
 const pegarFornecedor = require('./pegarFornecedor')
 const verificarFornecedor = (requisicao, resposta, proximo) => {
@@ -9,7 +10,7 @@ const verificarFornecedor = (requisicao, resposta, proximo) => {
     .catch(proximo)
 }
 
-roteador.get('/:fornecedor', (requisicao, resposta, proximo) => {
+roteador.get('/:fornecedor', async (requisicao, resposta, proximo) => {
   resposta.setHeader('Content-Type', 'application/json')
 
   pegarFornecedor(requisicao.params.fornecedor)

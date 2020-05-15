@@ -1,8 +1,16 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const app = express()
+const { tiposAceitos } = require('./serializador.js')
 
 app.use(bodyParser.json())
+
+app.use((requisicao, resposta, proximo) => {
+  const formatoRequisitado = requisicao.header('Accept')
+
+  if (tiposAceitos.indexOf(formatoRequisitado) === -1) {
+  }
+})
 
 app.use((requisicao, resposta, proximo) => {
   requisicao.comeco = Date.now()
