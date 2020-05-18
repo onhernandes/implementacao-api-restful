@@ -3,8 +3,6 @@ const Fornecedor = require('./Fornecedor')
 const TabelaFornecedor = require('./TabelaFornecedor')
 
 roteador.get('/:fornecedor', async (requisicao, resposta, proximo) => {
-  resposta.setHeader('Content-Type', 'application/json')
-
   try {
     const fornecedor = new Fornecedor({ id: requisicao.params.fornecedor })
     await fornecedor.carregar()
@@ -13,15 +11,14 @@ roteador.get('/:fornecedor', async (requisicao, resposta, proximo) => {
     const ultimaVezModificado = (new Date(fornecedor.updatedAt)).getTime()
     resposta.setHeader('Last-Modified', ultimaVezModificado)
     resposta.setHeader('ETag', fornecedor.version)
-    resposta.end(JSON.stringify(fornecedor))
+    const dadosDaResposta = requisicao.serializador(fornecedor, ['email'])
+    resposta.end(dadosDaResposta)
   } catch (e) {
     proximo(e)
   }
 })
 
 roteador.head('/:fornecedor', async (requisicao, resposta, proximo) => {
-  resposta.setHeader('Content-Type', 'application/json')
-
   try {
     const fornecedor = new Fornecedor({ id: requisicao.params.fornecedor })
     await fornecedor.carregar()
@@ -42,9 +39,9 @@ roteador.post('/', async (requisicao, resposta, proximo) => {
 
     resposta.status(201)
     resposta.setHeader('Location', `/api/fornecedores/${fornecedor.id}`)
-    resposta.setHeader('Content-Type', 'application/json')
     resposta.setHeader('ETag', fornecedor.version)
-    resposta.end(JSON.stringify(fornecedor))
+    const dadosDaResposta = requisicao.serializador(fornecedor, ['email'])
+    resposta.end(dadosDaResposta)
   } catch (e) {
     proximo(e)
   }
@@ -52,10 +49,11 @@ roteador.post('/', async (requisicao, resposta, proximo) => {
 
 roteador.get('/', async (requisicao, resposta, proximo) => {
   try {
-    const lista = await TabelaFornecedor.listar(requisicao.query.categoria)
+    let lista = await TabelaFornecedor.listar(requisicao.query.categoria)
+    lista = lista.map(fornecedor => new Fornecedor(fornecedor))
     resposta.status(200)
-    resposta.setHeader('Content-Type', 'application/json')
-    resposta.end(JSON.stringify(lista))
+    const dadosDaResposta = requisicao.serializador(lista)
+    resposta.end(dadosDaResposta)
   } catch (e) {
     proximo(e)
   }
@@ -64,7 +62,6 @@ roteador.get('/', async (requisicao, resposta, proximo) => {
 roteador.head('/', async (requisicao, resposta, proximo) => {
   try {
     resposta.status(200)
-    resposta.setHeader('Content-Type', 'application/json')
     resposta.end()
   } catch (e) {
     proximo(e)
@@ -79,7 +76,6 @@ roteador.put('/:fornecedor', async (requisicao, resposta, proximo) => {
     await fornecedor.atualizar()
     await fornecedor.carregar()
 
-    resposta.setHeader('Content-Type', 'application/json')
     const ultimaVezModificado = (new Date(fornecedor.updatedAt)).getTime()
     resposta.setHeader('Last-Modified', ultimaVezModificado)
     resposta.setHeader('ETag', fornecedor.version)
@@ -91,8 +87,6 @@ roteador.put('/:fornecedor', async (requisicao, resposta, proximo) => {
 })
 
 roteador.delete('/:fornecedor', async (requisicao, resposta, proximo) => {
-  resposta.setHeader('Content-Type', 'application/json')
-
   try {
     const id = requisicao.params.fornecedor
     const fornecedor = new Fornecedor({ id })

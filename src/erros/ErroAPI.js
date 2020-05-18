@@ -1,8 +1,7 @@
-function ErroAPI (status, mensagem, idErro) {
+function ErroAPI (mensagem) {
+  this.name = 'ErroAPI'
   this.message = mensagem
-  this.mensagem = mensagem
-  this.status = status
-  this.idErro = idErro || 0
+  this.idErro = 2
 }
 
 ErroAPI.prototype = new Error()

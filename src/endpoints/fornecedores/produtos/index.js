@@ -4,9 +4,11 @@ const Produto = require('./Produto')
 
 roteador.get('/', async (requisicao, resposta, proximo) => {
   try {
-    const lista = await TabelaProduto.listar()
+    let lista = await TabelaProduto.listar()
+    lista = lista.map(produto => new Produto(produto))
     resposta.status(200)
-    resposta.end(JSON.stringify(lista))
+    const dadosDaResposta = requisicao.serializador(lista)
+    resposta.end(dadosDaResposta)
   } catch (e) {
     proximo(e)
   }
@@ -22,10 +24,12 @@ roteador.post('/', async (requisicao, resposta, proximo) => {
     const fornecedor = requisicao.params.fornecedor
     const dados = Object.assign({}, requisicao.body, { fornecedor })
     const produto = new Produto(dados)
-    produto.criar()
+    await produto.criar()
     resposta.setHeader('Location', `/api/fornecedores/${produto.fornecedor}/produtos/${produto.id}`)
+    resposta.setHeader('ETag', produto.version)
     resposta.status(200)
-    resposta.end(JSON.stringify(produto))
+    const dadosDaResposta = requisicao.serializador(produto, ['preco', 'estoque'])
+    resposta.end(dadosDaResposta)
   } catch (e) {
     proximo(e)
   }
@@ -42,7 +46,8 @@ roteador.get('/:id', async (requisicao, resposta, proximo) => {
     resposta.setHeader('Last-Modified', ultimaVezModificado)
     resposta.setHeader('ETag', produto.version)
     resposta.status(200)
-    resposta.end(JSON.stringify(produto))
+    const dadosDaResposta = requisicao.serializador(produto, ['preco', 'estoque'])
+    resposta.end(dadosDaResposta)
   } catch (e) {
     proximo(e)
   }

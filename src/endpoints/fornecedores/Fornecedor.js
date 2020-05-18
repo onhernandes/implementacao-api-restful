@@ -1,71 +1,85 @@
 const TabelaFornecedor = require('./TabelaFornecedor')
 const CampoInvalido = require('../../erros/CampoInvalido')
 const NaoEncontrado = require('../../erros/NaoEncontrado')
+const DadosNaoFornecidos = require('../../erros/DadosNaoFornecidos')
 
-function Fornecedor ({ id, empresa, categoria, version, updatedAt }) {
-  this.id = id
-  this.empresa = empresa
-  this.categoria = categoria
-  this.version = version
-  this.updatedAt = updatedAt
-
-  return this
-}
-
-Fornecedor.prototype.validar = function validar () {
-  if (this.empresa.length === 0) {
-    throw new CampoInvalido('empresa')
+class Fornecedor {
+  constructor ({ id, empresa, email, categoria, version, updatedAt }) {
+    this.id = id
+    this.empresa = empresa
+    this.categoria = categoria
+    this.email = email
+    this.version = version
+    this.updatedAt = updatedAt
   }
 
-  if (this.categoria.length === 0) {
-    throw new CampoInvalido('empresa')
+  validar () {
+    const campos = ['empresa', 'categoria', 'email']
+
+    for (let i = 0; i < campos.length; i++) {
+      const campo = campos[i]
+      const valor = this[campo]
+      if (typeof valor !== 'string' || valor.length === 0) {
+        throw new CampoInvalido(campo)
+      }
+    }
   }
-}
 
-Fornecedor.prototype.verificarSeExiste = async function verificarSeExiste () {
-  const encontrado = await TabelaFornecedor.contar({
-    id: this.id
-  })
+  async verificarSeExiste () {
+    const encontrado = await TabelaFornecedor.contar({
+      id: this.id
+    })
 
-  if (!encontrado) {
-    throw new NaoEncontrado('fornecedor')
+    if (!encontrado) {
+      throw new NaoEncontrado('fornecedor')
+    }
   }
-}
 
-Fornecedor.prototype.atualizar = async function atualizar () {
-  this.validar()
-  await this.verificarSeExiste()
-  const dadosParaAtualizar = {
-    empresa: this.empresa,
-    categoria: this.categoria
+  async atualizar () {
+    const campos = ['empresa', 'categoria', 'email']
+    const dadosParaAtualizar = {}
+
+    campos.forEach(campo => {
+      if (this[campo]) {
+        dadosParaAtualizar[campo] = this[campo]
+      }
+    })
+
+    if (Object.keys(dadosParaAtualizar).length === 0) {
+      throw new DadosNaoFornecidos()
+    }
+
+    await this.verificarSeExiste()
+    await TabelaFornecedor.atualizar(this.id, dadosParaAtualizar)
+    await this.carregar()
   }
-  await TabelaFornecedor.atualizar(this.id, dadosParaAtualizar)
-  await this.carregar()
-}
 
-Fornecedor.prototype.criar = async function criar () {
-  this.validar()
-  const resultado = await TabelaFornecedor.criar({
-    empresa: this.empresa,
-    categoria: this.categoria
-  })
+  async criar () {
+    this.validar()
+    const resultado = await TabelaFornecedor.criar({
+      empresa: this.empresa,
+      email: this.email,
+      categoria: this.categoria
+    })
 
-  this.id = resultado.id
-  this.version = resultado.version
-  this.updatedAt = resultado.updatedAt
-}
+    this.id = resultado.id
+    this.version = resultado.version
+    this.updatedAt = resultado.updatedAt
+  }
 
-Fornecedor.prototype.remover = async function remover () {
-  await this.verificarSeExiste()
-  await TabelaFornecedor.remover(this.id)
-}
+  async remover () {
+    await this.verificarSeExiste()
+    await TabelaFornecedor.remover(this.id)
+  }
 
-Fornecedor.prototype.carregar = async function carregar () {
-  const encontrado = await TabelaFornecedor.pegarFornecedorPorId(this.id)
-  this.categoria = encontrado.categoria
-  this.empresa = encontrado.empresa
-  this.version = encontrado.version
-  this.updatedAt = encontrado.updatedAt
+  async carregar () {
+    const encontrado = await TabelaFornecedor.pegarFornecedorPorId(this.id)
+    this.categoria = encontrado.categoria
+    this.empresa = encontrado.empresa
+    this.email = encontrado.email
+    this.version = encontrado.version
+    this.updatedAt = encontrado.updatedAt
+  }
 }
 
 module.exports = Fornecedor

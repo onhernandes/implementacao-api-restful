@@ -9,7 +9,10 @@ module.exports = {
       where.categoria = categoria
     }
 
-    return ModeloTabelaFornecedor.findAll({ where })
+    return ModeloTabelaFornecedor.findAll({
+      where,
+      raw: true
+    })
   },
   async contar (criterios) {
     const encontrado = await ModeloTabelaFornecedor.count({
