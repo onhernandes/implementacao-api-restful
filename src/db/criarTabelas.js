@@ -1,7 +1,6 @@
 const models = [
   require('../endpoints/fornecedores/ModeloTabelaFornecedor').sync(),
-  require('../endpoints/fornecedores/produtos/ModeloTabelaProduto').sync(),
-  // require('../endpoints/carrinho-de-compras/ProdutosNoCarrinho').sync()
+  require('../endpoints/fornecedores/produtos/ModeloTabelaProduto').sync()
 ]
 
 Promise.all(models)

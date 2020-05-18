@@ -31,7 +31,6 @@ app.use((requisicao, resposta, proximo) => {
 })
 
 app.use('/api/fornecedores', require('./endpoints/fornecedores'))
-// app.use('/api/clientes', require('./endpoints/carrinho-de-compras'))
 
 app.use((erro, requisicao, resposta, proximo) => {
   console.error(erro)
