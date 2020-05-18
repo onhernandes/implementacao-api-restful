@@ -1,5 +1,6 @@
 const Fornecedor = require('./endpoints/fornecedores/Fornecedor')
 const Produto = require('./endpoints/fornecedores/produtos/Produto')
+const jsontoxml = require('jsontoxml')
 
 const filtrarObjeto = (camposPublicos, dados) => {
   const camposFiltrados = {}
@@ -69,7 +70,29 @@ const json = (dados, camposExtras) => {
 }
 
 const xml = (dados, camposExtras) => {
-  dados = validar(dados, camposExtras)
+  let tagRaiz = 'items'
+  let tagItem = 'item'
+
+  const item = Array.isArray(dados) ? dados[0] : dados
+
+  if (item instanceof Fornecedor) {
+    tagRaiz = 'fornecedores'
+    tagItem = 'fornecedor'
+  }
+
+  if (item instanceof Produto) {
+    tagRaiz = 'produtos'
+    tagItem = 'produto'
+  }
+
+  if (Array.isArray(dados)) {
+    dados = dados.map(item => validar(item, camposExtras))
+  } else {
+    dados = validar(dados, camposExtras)
+  }
+  return jsontoxml({
+    [tagRaiz]: dados.map(item => ({ [tagItem]: item }))
+  })
 }
 
 module.exports = {
