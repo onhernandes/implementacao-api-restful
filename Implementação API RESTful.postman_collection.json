@@ -22,7 +22,8 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"titulo\": \"Ração Maximum Original\",\n\t\"preco\": 56.2,\n\t\"estoque\": 10,\n\t\"categoria\": \"racao\"\n}"
+							"raw": "{\n\t\"titulo\": \"Ração Maximum Original\",\n\t\"preco\": 56.2,\n\t\"estoque\": 10,\n\t\"categoria\": \"racao\"\n}",
+							"options": {}
 						},
 						"url": {
 							"raw": "http://localhost:3000/api/fornecedores/2/produtos",
@@ -119,7 +120,8 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": ""
+							"raw": "",
+							"options": {}
 						},
 						"url": {
 							"raw": "http://localhost:3000/api/fornecedores/2/produtos/2/diminuir-estoque",
@@ -150,10 +152,15 @@
 								"name": "Content-Type",
 								"type": "text",
 								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/xml",
+								"type": "text"
 							}
 						],
 						"url": {
-							"raw": "http://localhost:3000/api/fornecedores/2/produtos",
+							"raw": "http://localhost:3000/api/fornecedores/",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -162,12 +169,70 @@
 							"path": [
 								"api",
 								"fornecedores",
-								"2",
-								"produtos"
+								""
 							]
 						}
 					},
 					"response": [
+						{
+							"name": "Listar produtos por fornecedor XML!",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/xml",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:3000/api/fornecedores/",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"fornecedores",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "xml",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/xml"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 18 May 2020 17:44:59 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Content-Length",
+									"value": "343"
+								}
+							],
+							"cookie": [],
+							"body": "<fornecedores>\n    <fornecedor>\n        <id>1</id>\n        <empresa>Maximum Rações LTDA</empresa>\n        <categoria>brinquedos</categoria>\n    </fornecedor>\n    <fornecedor>\n        <id>2</id>\n        <empresa>Maximum Rações LTDA</empresa>\n        <categoria>racao</categoria>\n    </fornecedor>\n    <fornecedor>\n        <id>3</id>\n        <empresa>Maximum Rações LTDA</empresa>\n        <categoria>racao</categoria>\n    </fornecedor>\n</fornecedores>"
+						},
 						{
 							"name": "Listar produtos por fornecedor",
 							"originalRequest": {
@@ -334,7 +399,8 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"titulo\": \"Ração Maximum\"\n}"
+							"raw": "{\n\t\"titulo\": \"Ração Maximum\"\n}",
+							"options": {}
 						},
 						"url": {
 							"raw": "http://localhost:3000/api/fornecedores/2/produtos/1",
@@ -448,452 +514,8 @@
 					},
 					"response": []
 				}
-			]
-		},
-		{
-			"name": "Carrinho de compras",
-			"item": [
-				{
-					"name": "Adicionar produto",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"quantidade\": 10\n}"
-						},
-						"url": {
-							"raw": "http://localhost:3000/api/clientes/344/carrinho-de-compras/e453",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"api",
-								"clientes",
-								"344",
-								"carrinho-de-compras",
-								"e453"
-							]
-						}
-					},
-					"response": [
-						{
-							"name": "Adicionar produto",
-							"originalRequest": {
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n\t\"quantidade\": 10\n}"
-								},
-								"url": {
-									"raw": "http://localhost:3000/api/clientes/344/carrinho-de-compras/e453",
-									"protocol": "http",
-									"host": [
-										"localhost"
-									],
-									"port": "3000",
-									"path": [
-										"api",
-										"clientes",
-										"344",
-										"carrinho-de-compras",
-										"e453"
-									]
-								}
-							},
-							"status": "Created",
-							"code": 201,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "application/json; charset=utf-8"
-								},
-								{
-									"key": "etag",
-									"value": "0"
-								},
-								{
-									"key": "Last-Modified",
-									"value": "1585159988233"
-								},
-								{
-									"key": "Location",
-									"value": "/api/clientes/344/carrinho-de-compra/e453"
-								},
-								{
-									"key": "X-Response-Time",
-									"value": "245ms"
-								},
-								{
-									"key": "Content-Length",
-									"value": "143"
-								},
-								{
-									"key": "Date",
-									"value": "Wed, 25 Mar 2020 18:13:08 GMT"
-								},
-								{
-									"key": "Connection",
-									"value": "keep-alive"
-								}
-							],
-							"cookie": [],
-							"body": "{\n    \"version\": 0,\n    \"id\": 1,\n    \"quantidade\": 10,\n    \"cliente\": \"344\",\n    \"sku\": \"e453\",\n    \"updatedAt\": \"2020-03-25T18:13:08.233Z\",\n    \"createdAt\": \"2020-03-25T18:13:08.233Z\"\n}"
-						}
-					]
-				},
-				{
-					"name": "Atualizar produto por versão",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"type": "text",
-								"value": "application/json"
-							},
-							{
-								"key": "If-Match",
-								"value": "3",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"quantidade\": 9\n}"
-						},
-						"url": {
-							"raw": "http://localhost:3000/api/clientes/344/carrinho-de-compras/e453",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"api",
-								"clientes",
-								"344",
-								"carrinho-de-compras",
-								"e453"
-							]
-						}
-					},
-					"response": [
-						{
-							"name": "Atualizar produto por versão",
-							"originalRequest": {
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									},
-									{
-										"key": "If-Match",
-										"value": "3",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n\t\"quantidade\": 9\n}"
-								},
-								"url": {
-									"raw": "http://localhost:3000/api/clientes/344/carrinho-de-compras/e453",
-									"protocol": "http",
-									"host": [
-										"localhost"
-									],
-									"port": "3000",
-									"path": [
-										"api",
-										"clientes",
-										"344",
-										"carrinho-de-compras",
-										"e453"
-									]
-								}
-							},
-							"status": "Precondition Failed",
-							"code": 412,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "application/json; charset=utf-8"
-								},
-								{
-									"key": "X-Response-Time",
-									"value": "10ms"
-								},
-								{
-									"key": "Content-Length",
-									"value": "67"
-								},
-								{
-									"key": "Date",
-									"value": "Wed, 25 Mar 2020 18:13:57 GMT"
-								},
-								{
-									"key": "Connection",
-									"value": "keep-alive"
-								}
-							],
-							"cookie": [],
-							"body": "{\n    \"id\": 3,\n    \"description\": \"Pré-condição de versão não é válida\"\n}"
-						}
-					]
-				},
-				{
-					"name": "Atualizar produto por data de alteração",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"type": "text",
-								"value": "application/json"
-							},
-							{
-								"key": "If-Unmodified-Since",
-								"type": "text",
-								"value": "1585160082000"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"quantidade\": 9\n}"
-						},
-						"url": {
-							"raw": "http://localhost:3000/api/clientes/344/carrinho-de-compras/e453",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"api",
-								"clientes",
-								"344",
-								"carrinho-de-compras",
-								"e453"
-							]
-						}
-					},
-					"response": [
-						{
-							"name": "Atualizar produto por data de alteração",
-							"originalRequest": {
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									},
-									{
-										"key": "If-Unmodified-Since",
-										"type": "text",
-										"value": "1585160075303"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n\t\"quantidade\": 9\n}"
-								},
-								"url": {
-									"raw": "http://localhost:3000/api/clientes/344/carrinho-de-compras/e453",
-									"protocol": "http",
-									"host": [
-										"localhost"
-									],
-									"port": "3000",
-									"path": [
-										"api",
-										"clientes",
-										"344",
-										"carrinho-de-compras",
-										"e453"
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "application/json; charset=utf-8"
-								},
-								{
-									"key": "etag",
-									"value": "0"
-								},
-								{
-									"key": "Last-Modified",
-									"value": "1585160082000"
-								},
-								{
-									"key": "X-Response-Time",
-									"value": "140ms"
-								},
-								{
-									"key": "Content-Length",
-									"value": "140"
-								},
-								{
-									"key": "Date",
-									"value": "Wed, 25 Mar 2020 18:14:42 GMT"
-								},
-								{
-									"key": "Connection",
-									"value": "keep-alive"
-								}
-							],
-							"cookie": [],
-							"body": "{\n    \"id\": 1,\n    \"cliente\": 344,\n    \"quantidade\": 9,\n    \"sku\": \"e453\",\n    \"createdAt\": \"2020-03-25T18:13:08.000Z\",\n    \"updatedAt\": \"2020-03-25T18:14:42.000Z\",\n    \"version\": 0\n}"
-						}
-					]
-				},
-				{
-					"name": "Remover produto do carrinho",
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"type": "text",
-								"value": "application/json"
-							}
-						],
-						"url": {
-							"raw": "http://localhost:3000/api/clientes/344/carrinho-de-compras/e453",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"api",
-								"clientes",
-								"344",
-								"carrinho-de-compras",
-								"e453"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Listar produtos no carrinho",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"type": "text",
-								"value": "application/json"
-							}
-						],
-						"url": {
-							"raw": "http://localhost:3000/api/clientes/344/carrinho-de-compras",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"api",
-								"clientes",
-								"344",
-								"carrinho-de-compras"
-							]
-						}
-					},
-					"response": [
-						{
-							"name": "Listar produtos no carrinho",
-							"originalRequest": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"url": {
-									"raw": "http://localhost:3000/api/clientes/344/carrinho-de-compras",
-									"protocol": "http",
-									"host": [
-										"localhost"
-									],
-									"port": "3000",
-									"path": [
-										"api",
-										"clientes",
-										"344",
-										"carrinho-de-compras"
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "application/json; charset=utf-8"
-								},
-								{
-									"key": "X-Response-Time",
-									"value": "7ms"
-								},
-								{
-									"key": "Content-Length",
-									"value": "143"
-								},
-								{
-									"key": "Date",
-									"value": "Wed, 25 Mar 2020 18:21:38 GMT"
-								},
-								{
-									"key": "Connection",
-									"value": "keep-alive"
-								}
-							],
-							"cookie": [],
-							"body": "[\n    {\n        \"id\": 2,\n        \"cliente\": 344,\n        \"quantidade\": 10,\n        \"sku\": \"e453\",\n        \"createdAt\": \"2020-03-25T18:21:35.000Z\",\n        \"updatedAt\": \"2020-03-25T18:21:35.000Z\",\n        \"version\": 0\n    }\n]"
-						}
-					]
-				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "Listar fornecedores",
@@ -972,11 +594,17 @@
 						"name": "Content-Type",
 						"value": "application/json",
 						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"empresa\": \"Maximum Rações LTDA\",\n\t\"categoria\": \"racao\"\n}"
+					"raw": "{\n\t\"empresa\": \"Maximum Rações LTDA\",\n\t\"categoria\": \"racao\",\n\t\"email\": \"contato@maximum.com\"\n}",
+					"options": {}
 				},
 				"url": {
 					"raw": "http://localhost:3000/api/fornecedores",
@@ -1002,11 +630,17 @@
 								"name": "Content-Type",
 								"value": "application/json",
 								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"empresa\": \"Maximum Rações LTDA\",\n\t\"categoria\": \"racao\"\n}"
+							"raw": "{\n\t\"empresa\": \"Maximum Rações LTDA\",\n\t\"categoria\": \"racao\",\n\t\"email\": \"contato@maximum.com\"\n}",
+							"options": {}
 						},
 						"url": {
 							"raw": "http://localhost:3000/api/fornecedores",
@@ -1026,40 +660,41 @@
 					"_postman_previewlanguage": "json",
 					"header": [
 						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
 							"key": "Content-Type",
-							"value": "application/json; charset=utf-8"
+							"value": "application/json"
 						},
 						{
 							"key": "Location",
-							"value": "/api/fornecedores/1"
+							"value": "/api/fornecedores/3"
 						},
 						{
-							"key": "X-Response-Time",
-							"value": "437ms"
-						},
-						{
-							"key": "Content-Length",
-							"value": "152"
+							"key": "ETag",
+							"value": "0"
 						},
 						{
 							"key": "Date",
-							"value": "Wed, 25 Mar 2020 18:00:48 GMT"
+							"value": "Mon, 18 May 2020 15:11:29 GMT"
 						},
 						{
 							"key": "Connection",
 							"value": "keep-alive"
+						},
+						{
+							"key": "Content-Length",
+							"value": "92"
 						}
 					],
 					"cookie": [],
-					"body": "{\n    \"version\": 0,\n    \"id\": 1,\n    \"empresa\": \"Maximum Rações LTDA\",\n    \"categoria\": \"racao\",\n    \"updatedAt\": \"2020-03-25T18:00:48.367Z\",\n    \"createdAt\": \"2020-03-25T18:00:48.367Z\"\n}"
+					"body": "{\n    \"id\": 3,\n    \"empresa\": \"Maximum Rações LTDA\",\n    \"categoria\": \"racao\",\n    \"email\": \"contato@maximum.com\"\n}"
 				}
 			]
 		},
 		{
 			"name": "Pegar fornecedor",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
 			"request": {
 				"method": "GET",
 				"header": [
@@ -1068,12 +703,13 @@
 						"name": "Content-Type",
 						"type": "text",
 						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
 					}
 				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"empresa\": \"Maximum Rações LTDA\",\n\t\"categoria\": \"racao\"\n}"
-				},
 				"url": {
 					"raw": "http://localhost:3000/api/fornecedores/1",
 					"protocol": "http",
@@ -1099,12 +735,13 @@
 								"name": "Content-Type",
 								"type": "text",
 								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"empresa\": \"Maximum Rações LTDA\",\n\t\"categoria\": \"racao\"\n}"
-						},
 						"url": {
 							"raw": "http://localhost:3000/api/fornecedores/1",
 							"protocol": "http",
@@ -1124,36 +761,36 @@
 					"_postman_previewlanguage": "json",
 					"header": [
 						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
 							"key": "Last-Modified",
-							"value": "1585159248000"
+							"value": "1589814475000"
 						},
 						{
 							"key": "ETag",
 							"value": "0"
 						},
 						{
-							"key": "Content-Type",
-							"value": "application/json; charset=utf-8"
-						},
-						{
-							"key": "X-Response-Time",
-							"value": "12ms"
-						},
-						{
-							"key": "Content-Length",
-							"value": "152"
-						},
-						{
 							"key": "Date",
-							"value": "Wed, 25 Mar 2020 18:01:38 GMT"
+							"value": "Mon, 18 May 2020 15:10:36 GMT"
 						},
 						{
 							"key": "Connection",
 							"value": "keep-alive"
+						},
+						{
+							"key": "Content-Length",
+							"value": "94"
 						}
 					],
 					"cookie": [],
-					"body": "{\n    \"id\": 1,\n    \"empresa\": \"Maximum Rações LTDA\",\n    \"categoria\": \"racao\",\n    \"createdAt\": \"2020-03-25T18:00:48.000Z\",\n    \"updatedAt\": \"2020-03-25T18:00:48.000Z\",\n    \"version\": 0\n}"
+					"body": "{\n    \"id\": \"1\",\n    \"empresa\": \"Maximum Rações LTDA\",\n    \"categoria\": \"racao\",\n    \"email\": \"contato@maximum.com\"\n}"
 				}
 			]
 		},
@@ -1167,11 +804,17 @@
 						"name": "Content-Type",
 						"type": "text",
 						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"categoria\": \"brinquedos\"\n}"
+					"raw": "{\n\t\"categoria\": \"brinquedos\"\n}",
+					"options": {}
 				},
 				"url": {
 					"raw": "http://localhost:3000/api/fornecedores/1",
@@ -1203,7 +846,8 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": ""
+					"raw": "",
+					"options": {}
 				},
 				"url": {
 					"raw": "http://localhost:3000/api/fornecedores/1",
@@ -1221,5 +865,6 @@
 			},
 			"response": []
 		}
-	]
+	],
+	"protocolProfileBehavior": {}
 }
