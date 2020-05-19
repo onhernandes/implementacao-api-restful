@@ -1,6 +1,6 @@
 function ErroAPI (mensagem) {
   this.name = 'ErroAPI'
-  this.message = mensagem
+  this.mensagem = mensagem
   this.idErro = 2
 }
 

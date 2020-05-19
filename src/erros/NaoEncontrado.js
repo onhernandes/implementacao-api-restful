@@ -1,6 +1,6 @@
 function NaoEncontrado (entidade) {
   this.name = 'NaoEncontrado'
-  this.message = `'${entidade}' não encontrado!`
+  this.mensagem = `'${entidade}' não encontrado!`
   this.idErro = 0
 }
 

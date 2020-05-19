@@ -1,6 +1,6 @@
 function DadosNaoFornecidos () {
   this.name = 'DadosNaoFornecidos'
-  this.message = 'Não foram fornecidos dados suficientes para completar a requisição'
+  this.mensagem = 'Não foram fornecidos dados suficientes para completar a requisição'
   this.idErro = 5
 }
 

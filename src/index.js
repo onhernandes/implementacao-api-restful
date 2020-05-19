@@ -1,7 +1,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const app = express()
-const serializador = require('./serializador.js')
+const { formatosAceitos, SerializadorErro } = require('./serializador.js')
 const NaoEncontrado = require('./erros/NaoEncontrado')
 const CampoInvalido = require('./erros/CampoInvalido')
 const ErroAPI = require('./erros/ErroAPI')
@@ -13,19 +13,17 @@ app.use((requisicao, resposta, proximo) => {
   const cabecalhoAccept = requisicao.header('Accept')
   const formatoRequisitado = cabecalhoAccept === '*/*' ? 'application/json' : cabecalhoAccept
 
-  if (Object.keys(serializador).indexOf(formatoRequisitado) === -1) {
+  if (formatosAceitos.indexOf(formatoRequisitado) === -1) {
     resposta.status(406)
     resposta.end()
     return
   }
 
   resposta.setHeader('Content-Type', formatoRequisitado)
-  requisicao.serializador = serializador[formatoRequisitado]
   proximo()
 })
 
 app.use((requisicao, resposta, proximo) => {
-  console.log(requisicao.serializador)
   requisicao.comeco = Date.now()
   proximo()
 })
@@ -35,11 +33,6 @@ app.use('/api/fornecedores', require('./endpoints/fornecedores'))
 app.use((erro, requisicao, resposta, proximo) => {
   console.log(erro)
   let status = 500
-
-  const informacoes = {
-    idErro: erro.idErro,
-    mensagem: erro.message
-  }
 
   if (erro instanceof ValorNaoSuportado) {
     status = 501
@@ -58,8 +51,9 @@ app.use((erro, requisicao, resposta, proximo) => {
   }
 
   resposta.status(status)
+  const contentType = resposta.getHeader('Content-Type')
+  const serializador = new SerializadorErro(contentType)
 
-  const dadosDaResposta = requisicao.serializador(informacoes)
-  resposta.send(dadosDaResposta)
+  resposta.send(serializador.serializar(erro))
 })
 app.listen(3000, () => console.log('A API está funcionando!'))

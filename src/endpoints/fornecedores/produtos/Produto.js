@@ -1,6 +1,7 @@
 const TabelaProduto = require('./TabelaProduto')
 const NaoEncontrado = require('../../../erros/NaoEncontrado')
 const CampoInvalido = require('../../../erros/CampoInvalido')
+const Fornecedor = require('../Fornecedor')
 
 class Produto {
   constructor ({ id, titulo, preco, estoque, categoria, fornecedor, version, updatedAt }) {
@@ -22,19 +23,23 @@ class Produto {
       }
     })
 
-    const camposInteiro = ['preco', 'estoque', 'fornecedor']
+    const camposInteiro = ['preco', 'estoque']
     camposInteiro.forEach(campo => {
       const valor = Number(this[campo])
       if (isNaN(valor)) {
         throw new CampoInvalido(campo)
       }
     })
+
+    if ((this.fornecedor instanceof Fornecedor) === false) {
+      throw new CampoInvalido('fornecedor')
+    }
   }
 
   async verificarSeExiste () {
     const encontrado = await TabelaProduto.contar({
       id: this.id,
-      fornecedor: this.fornecedor
+      fornecedor: this.fornecedor.id
     })
 
     if (!encontrado) {
@@ -59,7 +64,7 @@ class Produto {
       return
     }
 
-    await TabelaProduto.atualizar(this.id, this.fornecedor, dadosParaAtualizar)
+    await TabelaProduto.atualizar(this.id, this.fornecedor.id, dadosParaAtualizar)
     await this.carregar()
   }
 
@@ -70,7 +75,7 @@ class Produto {
       preco: this.preco,
       estoque: this.estoque,
       categoria: this.categoria,
-      fornecedor: this.fornecedor
+      fornecedor: this.fornecedor.id
     })
 
     this.id = resultado.id
@@ -80,11 +85,11 @@ class Produto {
 
   async remover () {
     await this.verificarSeExiste()
-    await TabelaProduto.remover(this.id, this.fornecedor)
+    await TabelaProduto.remover(this.id, this.fornecedor.id)
   }
 
   async carregar () {
-    const encontrado = await TabelaProduto.pegarProdutoPorId(this.id, this.fornecedor)
+    const encontrado = await TabelaProduto.pegarProdutoPorId(this.id, this.fornecedor.id)
     this.titulo = encontrado.titulo
     this.preco = encontrado.preco
     this.estoque = encontrado.estoque
@@ -95,7 +100,7 @@ class Produto {
 
   async diminuirEstoque () {
     const id = this.id
-    const fornecedor = this.fornecedor
+    const fornecedor = this.fornecedor.id
     await TabelaProduto.diminuir({ id, fornecedor }, 'estoque', 1)
   }
 }

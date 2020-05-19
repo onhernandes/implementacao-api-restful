@@ -3,12 +3,14 @@ const NaoEncontrado = require('../../../erros/NaoEncontrado')
 const Sequelize = require('sequelize')
 
 module.exports = {
-  listar (filtros) {
+  listar (fornecedor, filtros) {
     let where = {}
 
     if (filtros) {
       where = filtros
     }
+
+    where.fornecedor = fornecedor.id
 
     return ModeloTabelaProduto.findAll({ where })
   },

@@ -1,6 +1,6 @@
 function ValorNaoSuportado (tipo) {
   this.name = 'ValorNaoSuportado'
-  this.message = `Valor do tipo ${tipo} não suportado pelo serializador`
+  this.mensagem = `Valor do tipo ${tipo} não suportado pelo serializador`
   this.idErro = 4
 }
 

@@ -1,101 +1,112 @@
-const Fornecedor = require('./endpoints/fornecedores/Fornecedor')
-const Produto = require('./endpoints/fornecedores/produtos/Produto')
 const jsontoxml = require('jsontoxml')
 
-const filtrarObjeto = (camposPublicos, dados) => {
-  const camposFiltrados = {}
+class Serializador {
+  filtrarObjeto (item) {
+    const camposFiltrados = {}
 
-  camposPublicos.forEach(campo => {
-    const possuiCampo = Object
-      .prototype
-      .hasOwnProperty
-      .apply(dados, [campo])
+    this.camposPublicos.forEach(campo => {
+      const possuiCampo = Object
+        .prototype
+        .hasOwnProperty
+        .apply(item, [campo])
 
-    if (possuiCampo) {
-      camposFiltrados[campo] = dados[campo]
+      if (possuiCampo) {
+        camposFiltrados[campo] = item[campo]
+      }
+    })
+
+    return camposFiltrados
+  }
+
+  filtrar (dadosParaSerializar) {
+    if (Array.isArray(dadosParaSerializar)) {
+      dadosParaSerializar = dadosParaSerializar.map(item => this.filtrarObjeto(item))
+    } else {
+      dadosParaSerializar = this.filtrarObjeto(dadosParaSerializar)
     }
-  })
 
-  return camposFiltrados
+    return dadosParaSerializar
+  }
+
+  json (dadosParaSerializar) {
+    dadosParaSerializar = this.filtrar(dadosParaSerializar)
+
+    return JSON.stringify(dadosParaSerializar)
+  }
+
+  xml (dadosParaSerializar) {
+    dadosParaSerializar = this.filtrar(dadosParaSerializar)
+
+    if (Array.isArray(dadosParaSerializar)) {
+      return jsontoxml({
+        [this.tagPlural]: dadosParaSerializar.map(item => ({ [this.tagSingular]: item }))
+      })
+    }
+
+    return jsontoxml({
+      [this.tagSingular]: dadosParaSerializar
+    })
+  }
+
+  serializar (dadosParaSerializar) {
+    if (this.contentType === 'application/json') {
+      return this.json(dadosParaSerializar)
+    }
+
+    if (this.contentType === 'application/xml') {
+      return this.xml(dadosParaSerializar)
+    }
+  }
 }
 
-const filtrarFornecedor = (fornecedor, camposExtras) => {
-  let camposPublicos = [
-    'id',
-    'empresa',
-    'categoria'
-  ]
-
-  if (Array.isArray(camposExtras)) {
-    camposPublicos = camposPublicos.concat(camposExtras)
+class SerializadorFornecedor extends Serializador {
+  constructor (contentType, camposExtras) {
+    super()
+    this.tagPlural = 'fornecedores'
+    this.tagSingular = 'fornecedor'
+    this.camposPublicos = [
+      'id',
+      'empresa',
+      'categoria'
+    ].concat(camposExtras || [])
+    this.contentType = contentType
   }
-
-  return filtrarObjeto(camposPublicos, fornecedor)
 }
 
-const filtrarProduto = (produto, camposExtras) => {
-  let camposPublicos = [
-    'id',
-    'titulo',
-    'categoria',
-    'fornecedor'
-  ]
-
-  if (Array.isArray(camposExtras)) {
-    camposPublicos = camposPublicos.concat(camposExtras)
+class SerializadorProduto extends Serializador {
+  constructor (contentType, camposExtras) {
+    super()
+    this.tagPlural = 'produtos'
+    this.tagSingular = 'produto'
+    this.camposPublicos = [
+      'id',
+      'titulo',
+      'categoria'
+    ].concat(camposExtras || [])
+    console.log('camposExtras', camposExtras);
+    this.contentType = contentType
   }
-
-  return filtrarObjeto(camposPublicos, produto)
 }
 
-const validar = (dados, camposExtras) => {
-  if (dados instanceof Fornecedor) {
-    dados = filtrarFornecedor(dados, camposExtras)
+class SerializadorErro extends Serializador {
+  constructor (contentType, camposExtras) {
+    super()
+    this.tagPlural = 'erros'
+    this.tagSingular = 'erro'
+    this.camposPublicos = [
+      'idErro',
+      'mensagem'
+    ].concat(camposExtras || [])
+    this.contentType = contentType
   }
-
-  if (dados instanceof Produto) {
-    dados = filtrarProduto(dados, camposExtras)
-  }
-
-  return dados
-}
-
-const json = (dados, camposExtras) => {
-  if (Array.isArray(dados)) {
-    dados = dados.map(item => validar(item, camposExtras))
-  } else {
-    dados = validar(dados, camposExtras)
-  }
-  return JSON.stringify(dados)
-}
-
-const xml = (dados, camposExtras) => {
-  let tagRaiz = 'items'
-  let tagItem = 'item'
-
-  const item = Array.isArray(dados) ? dados[0] : dados
-
-  if (item instanceof Fornecedor) {
-    tagRaiz = 'fornecedores'
-    tagItem = 'fornecedor'
-  }
-
-  if (item instanceof Produto) {
-    tagRaiz = 'produtos'
-    tagItem = 'produto'
-  }
-
-  if (Array.isArray(dados)) {
-    dados = dados.map(item => validar(item, camposExtras))
-  } else {
-    dados = validar(dados, camposExtras)
-  }
-  return jsontoxml({
-    [tagRaiz]: dados.map(item => ({ [tagItem]: item }))
-  })
 }
 
 module.exports = {
-  'application/json': json,
-  'application/xml': xml
+  SerializadorFornecedor,
+  SerializadorProduto,
+  SerializadorErro,
+  formatosAceitos: [
+    'application/json',
+    'application/xml'
+  ]
 }

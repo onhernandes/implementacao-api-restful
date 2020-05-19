@@ -1,6 +1,7 @@
 const roteador = require('express').Router()
 const Fornecedor = require('./Fornecedor')
 const TabelaFornecedor = require('./TabelaFornecedor')
+const { SerializadorFornecedor } = require('../../serializador')
 
 roteador.get('/:fornecedor', async (requisicao, resposta, proximo) => {
   try {
@@ -8,10 +9,14 @@ roteador.get('/:fornecedor', async (requisicao, resposta, proximo) => {
     await fornecedor.carregar()
 
     resposta.status(200)
+
     const ultimaVezModificado = (new Date(fornecedor.updatedAt)).getTime()
     resposta.setHeader('Last-Modified', ultimaVezModificado)
     resposta.setHeader('ETag', fornecedor.version)
-    const dadosDaResposta = requisicao.serializador(fornecedor, ['email'])
+
+    const contentType = resposta.getHeader('Content-Type')
+    const serializador = new SerializadorFornecedor(contentType, ['email'])
+    const dadosDaResposta = serializador.serializar(fornecedor)
     resposta.end(dadosDaResposta)
   } catch (e) {
     proximo(e)
@@ -40,7 +45,10 @@ roteador.post('/', async (requisicao, resposta, proximo) => {
     resposta.status(201)
     resposta.setHeader('Location', `/api/fornecedores/${fornecedor.id}`)
     resposta.setHeader('ETag', fornecedor.version)
-    const dadosDaResposta = requisicao.serializador(fornecedor, ['email'])
+
+    const contentType = resposta.getHeader('Content-Type')
+    const serializador = new SerializadorFornecedor(contentType, ['email'])
+    const dadosDaResposta = serializador.serializar(fornecedor)
     resposta.end(dadosDaResposta)
   } catch (e) {
     proximo(e)
@@ -52,7 +60,11 @@ roteador.get('/', async (requisicao, resposta, proximo) => {
     let lista = await TabelaFornecedor.listar(requisicao.query.categoria)
     lista = lista.map(fornecedor => new Fornecedor(fornecedor))
     resposta.status(200)
-    const dadosDaResposta = requisicao.serializador(lista)
+
+    const contentType = resposta.getHeader('Content-Type')
+    const serializador = new SerializadorFornecedor(contentType)
+    const dadosDaResposta = serializador.serializar(lista)
+
     resposta.end(dadosDaResposta)
   } catch (e) {
     proximo(e)
