@@ -83,7 +83,6 @@ class SerializadorProduto extends Serializador {
       'titulo',
       'categoria'
     ].concat(camposExtras || [])
-    console.log('camposExtras', camposExtras);
     this.contentType = contentType
   }
 }

@@ -11,7 +11,7 @@ app.use(bodyParser.json())
 
 app.use((requisicao, resposta, proximo) => {
   const cabecalhoAccept = requisicao.header('Accept')
-  const formatoRequisitado = cabecalhoAccept === '*/*' ? 'application/json' : cabecalhoAccept
+  let formatoRequisitado = cabecalhoAccept === '*/*' ? 'application/json' : cabecalhoAccept
 
   if (formatosAceitos.indexOf(formatoRequisitado) === -1) {
     resposta.status(406)
@@ -19,7 +19,8 @@ app.use((requisicao, resposta, proximo) => {
     return
   }
 
-  resposta.setHeader('Content-Type', formatoRequisitado)
+  formatoRequisitado = formatoRequisitado.split(';')[0]
+  resposta.setHeader('Content-Type', `${formatoRequisitado}; charset=utf-8`)
   proximo()
 })
 
