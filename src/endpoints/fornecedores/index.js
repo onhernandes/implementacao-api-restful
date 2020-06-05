@@ -17,7 +17,7 @@ roteador.get('/:fornecedor', async (requisicao, resposta, proximo) => {
     const contentType = resposta.getHeader('Content-Type')
     const serializador = new SerializadorFornecedor(contentType, ['email'])
     const dadosDaResposta = serializador.serializar(fornecedor)
-    resposta.end(dadosDaResposta)
+    resposta.send(dadosDaResposta)
   } catch (e) {
     proximo(e)
   }
@@ -65,7 +65,7 @@ roteador.get('/', async (requisicao, resposta, proximo) => {
     const serializador = new SerializadorFornecedor(contentType)
     const dadosDaResposta = serializador.serializar(lista)
 
-    resposta.end(dadosDaResposta)
+    resposta.send(dadosDaResposta)
   } catch (e) {
     proximo(e)
   }

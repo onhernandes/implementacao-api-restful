@@ -19,8 +19,7 @@ app.use((requisicao, resposta, proximo) => {
     return
   }
 
-  formatoRequisitado = formatoRequisitado.split(';')[0]
-  resposta.setHeader('Content-Type', `${formatoRequisitado}; charset=utf-8`)
+  resposta.setHeader('Content-Type', `${formatoRequisitado}`)
   proximo()
 })
 
