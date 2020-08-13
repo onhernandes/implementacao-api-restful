@@ -1,9 +1,13 @@
 const models = [
-  require('../endpoints/fornecedores/ModeloTabelaFornecedor').sync(),
-  require('../endpoints/fornecedores/produtos/ModeloTabelaProduto').sync()
-]
+  require('../endpoints/fornecedores/ModeloTabelaFornecedor'),
+  require('../endpoints/fornecedores/produtos/ModeloTabelaProduto')
+];
 
-Promise.all(models)
-  .then(() => console.log('Sincronizado!'))
-  .then(() => process.exit())
-  .catch(console.log)
+(async () => {
+  for (let i = 0; i < models.length; i++) {
+    const model = models[i]
+    await model.sync()
+  }
+
+  console.log('Sincronizado')
+})()

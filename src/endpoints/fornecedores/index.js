@@ -15,7 +15,7 @@ roteador.get('/:fornecedor', async (requisicao, resposta, proximo) => {
     resposta.setHeader('ETag', fornecedor.version)
 
     const contentType = resposta.getHeader('Content-Type')
-    const serializador = new SerializadorFornecedor(contentType, ['email'])
+    const serializador = new SerializadorFornecedor(contentType, ['email', 'empresa'])
     const dadosDaResposta = serializador.serializar(fornecedor)
     resposta.send(dadosDaResposta)
   } catch (e) {
@@ -47,7 +47,7 @@ roteador.post('/', async (requisicao, resposta, proximo) => {
     resposta.setHeader('ETag', fornecedor.version)
 
     const contentType = resposta.getHeader('Content-Type')
-    const serializador = new SerializadorFornecedor(contentType, ['email'])
+    const serializador = new SerializadorFornecedor(contentType, ['email', 'empresa'])
     const dadosDaResposta = serializador.serializar(fornecedor)
     resposta.end(dadosDaResposta)
   } catch (e) {
@@ -62,7 +62,7 @@ roteador.get('/', async (requisicao, resposta, proximo) => {
     resposta.status(200)
 
     const contentType = resposta.getHeader('Content-Type')
-    const serializador = new SerializadorFornecedor(contentType)
+    const serializador = new SerializadorFornecedor(contentType, ['empresa'])
     const dadosDaResposta = serializador.serializar(lista)
 
     resposta.send(dadosDaResposta)

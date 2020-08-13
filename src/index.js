@@ -11,7 +11,7 @@ app.use(bodyParser.json())
 
 app.use((requisicao, resposta, proximo) => {
   const cabecalhoAccept = requisicao.header('Accept')
-  let formatoRequisitado = cabecalhoAccept === '*/*' ? 'application/json' : cabecalhoAccept
+  const formatoRequisitado = cabecalhoAccept === '*/*' ? 'application/json' : cabecalhoAccept
 
   if (formatosAceitos.indexOf(formatoRequisitado) === -1) {
     resposta.status(406)
@@ -24,11 +24,16 @@ app.use((requisicao, resposta, proximo) => {
 })
 
 app.use((requisicao, resposta, proximo) => {
-  requisicao.comeco = Date.now()
+  const headers = 'Origin, Content-Type, Accept'
+  resposta.header('Access-Control-Allow-Origin', '*')
+  resposta.header('Access-Control-Allow-Headers', headers)
+  resposta.header('Access-Control-Expose-Headers', 'X-Powered-By')
+  resposta.header('Access-Control-Allow-Methods', 'HEAD, GET, POST, OPTIONS, DELETE, PUT')
   proximo()
 })
 
 app.use('/api/fornecedores', require('./endpoints/fornecedores'))
+app.use('/api/v2.0.0/fornecedores', require('./endpoints/fornecedores/rotas.v2.js'))
 
 app.use((erro, requisicao, resposta, proximo) => {
   console.log(erro)
